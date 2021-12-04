@@ -31,8 +31,8 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_category='$id'");
 
     <!-- Navbar -->
 
-    <div class="container-fluid shadow-sm mb-4">
-        <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #F4EFF4;">
             <div class="container">
                 <img class="mw-25 mh-25 mt-3" src="assets/img/logo.svg" style="height: 50px; width: 50px;" alt="" srcset="">
                 <a class="navbar-brand ms-3 fw-bold mt-3" href="index.php" style="font-family: 'Montserrat', sans-serif;">Dolen Suroboyo</a>
@@ -58,19 +58,45 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_category='$id'");
 
     <!-- End Navbar -->
 
+    <?php
+    $result = mysqli_fetch_array($query);
+
+    ?>
+
+    <div class="text-center pt-3" style="background-color: #F4EFF4;">
+
+        <p class="fs-1 fw-bold pt-3">#<?= $result['name_category'] ?></p>
+        <p class="fs-5 text-center">A national park is not a playground. It's a sanctuary for nature and for humans who will accept nature on nature's own terms.</p>
+        <p class="">- Michael Frome</p>
+
+        <div class="container pb-5 mb-5 mt-5 ">
+            <div class="rounded-slide-search d-inline-flex start-50 p-2 pe-4 shadow-sm bg-body w-50">
+                <form class="d-flex position-relative w-100 m-2">
+                    <input class="ps-3 pe-3 rounded-slide-search w-100 search-no-focus" style="border: none;" type="search" placeholder="Search <?= $result['name_category'] ?>" aria-label="Search">
+                    <button class="btn p-3 d-sm-inline-flex start-50" type="submit" style="background-color: #7F67BE;">
+                        <i class="fas fa-search-location text-light fa-lg"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- <div class="container pb-5 mb-5 " style="width: 25%;">
+            <form class="m-2 input-group">
+                <input class="ps-3 pe-5 p-3 rounded-slide-search w-100 search-no-focus" style="border: none; background-color: #fff;" type="search" placeholder="Search Places" aria-label="Search">
+                <button class="btn p-3 d-sm-inline-flex start-50" type="submit" style="background-color: #7F67BE;">
+                    <i class="fas fa-search-location text-light fa-lg"></i>
+                </button>
+            </form>
+        </div> -->
+
+
+    </div>
+
     <!-- Content -->
 
-    <div class="container mb-5">
-
-        <?php
-        $result = mysqli_fetch_array($query);
-
-        ?>
-
-        <p class="fs-2 fw-bold pt-3"><?= $result['name_category'] ?></p>
-        <p class="mb-5 ">Not sure where's to go, Here popular destinations for you!</p>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
-
+    <!-- <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3"> -->
+    <div class="mb-3 container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
 
             <?php
             // $idQuery = mysqli_query($connect, "SELECT * FROM place_category ORDER BY id DESC");
@@ -86,57 +112,59 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_category='$id'");
             }
 
             $no = $position + 1;
-            $sql = "SELECT * FROM place WHERE id_category=$id limit $position, $maxContent";
-            $results = mysqli_query($connect, $sql);
-            while ($data = mysqli_fetch_array($results)) {
+            $sql = mysqli_query($connect, "SELECT * FROM place WHERE id_category=$id limit $position, $maxContent");
+            while ($result = mysqli_fetch_array($sql)) {
+
             ?>
 
 
-
-
-
-
-                <div class="col">
-                    <div class="card shadow-sm ">
-                        <img src="<?= $data['place_image'] ?>" class="card-img-top" alt="...">
+                <div class="col ">
+                    <div class="p-2 shadow rounded-slide position-relative ">
+                        <img src="<?= $result['place_image'] ?>" class="card-img-top p-2 rounded-slide " alt="..." style="border-top-right-radius:20px; border-top-left-radius:20px">
                         <div class="card-body">
-                            <a href="detail-data.php?id=<?= $data['id_place'] ?>" class="card-title text-truncate"><?= $data['name_place'] ?></a>
+                            <h5 class="card-title text-truncate"><?= $result['name_place'] ?></h5>
+                            <p class="text-secondary text-truncate" style="font-size: 12px;"><?= $result['location_place'] ?></p>
+                            <p class="card-text"><?= $result['desc_place'] ?></p>
+                            <a href="<?= $result['map'] ?>" class="text-decoration-none text-secondary text-end fa-md "><i class="fas fa-map-marker text-primary me-2"></i>Map</a>
+                            <i class="far fa-bookmark  position-absolute fa-2x mb-4 me-3 text-secondary bottom-0 end-0"></i>
 
-                            <p class="text-secondary text-truncate" style="font-size: 12px;"><?= $data['location_place'] ?></p>
-                            <p class="card-text"><?= $data['desc_place'] ?></p>
-                            <a href="<?= $data['map'] ?>" class="btn text-light" style="background-color: #7F67BE;">Show Map</a>
                         </div>
                     </div>
 
                 </div>
-
             <?php $no++;
             } ?>
 
+
         </div>
+    </div>
 
-        <?php
 
-        $query2 = mysqli_query($connect, "SELECT * FROM place WHERE id_category=$id");
-        $total = mysqli_num_rows($query2);
-        $totalPages = ceil($total / $maxContent);
-        ?>
 
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end mt-5">
+    <!-- </div> -->
 
-                <?php
-                for ($i = 1; $i <= $totalPages; $i++) {
-                    if ($i != $pages) {
-                        echo "<li class='page-item'><a class='page-link' href='category.php?id=$id?page=$i'>$i</a></li>";
-                    } else {
-                        echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
-                    }
+    <?php
+
+    $query2 = mysqli_query($connect, "SELECT * FROM place WHERE id_category=$id");
+    $total = mysqli_num_rows($query2);
+    $totalPages = ceil($total / $maxContent);
+    ?>
+
+    <nav aria-label="Page navigation example mb-5">
+        <ul class="pagination justify-content-center mt-5">
+
+            <?php
+            for ($i = 1; $i <= $totalPages; $i++) {
+                if ($i != $pages) {
+                    echo "<li class='page-item'><a class='page-link' href='category.php?id=$id&page=$i'>$i</a></li>";
+                } else {
+                    echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
                 }
-                ?>
+            }
+            ?>
 
-            </ul>
-        </nav>
+        </ul>
+    </nav>
 
     </div>
 
@@ -153,7 +181,7 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_category='$id'");
 
     <!-- Footer -->
 
-    <div class="container-fluid p-5 " style="background-color: #F4EFF4;">
+    <div class="container-fluid p-5 shadow-sm" style="background-color: #F4EFF4;">
         <p class="text-center">Made with <i class="far fa-kiss-wink-heart bg-warning text-danger fa-lg" style="border-radius: 50%;"></i> by dulur Suroboyo.</p>
     </div>
 

@@ -67,14 +67,12 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_place='$id'");
 
         ?>
 
-        <p class="fs-2 fw-bold pt-3"><?= $result['name_category'] ?></p>
+        <p class="fs-2 fw-bold pt-3 "><?= $result['name_category'] ?></p>
         <p class="mb-5 ">Not sure where's to go, Here popular destinations for you!</p>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
 
 
             <?php
-            // $idQuery = mysqli_query($connect, "SELECT * FROM place_category ORDER BY id DESC");
-            // $id = mysqli_fetch_array($idQuery);
 
             $dataPlaces = mysqli_query($connect, "SELECT * FROM place WHERE id_place=$id");
             while ($result = mysqli_fetch_array($dataPlaces)) {
@@ -97,30 +95,6 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_place='$id'");
             <?php } ?>
 
         </div>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end mt-5">
-                <li class="page-item">
-                    <a class="page-link" <?php
-                                            if ($pager > 1) {
-                                                echo "href='?page=$previous'";
-                                            } ?>>Previous</a>
-                </li>
-                <?php for ($x = 1; $x <= $totalPages; $x++) {
-                ?>
-
-                    <li class="page-item"><a class="page-link" href="?id=<?= $id['id'] ?>?page=<?php echo $x ?>"><?php echo $x; ?></a></li>
-
-                <?php } ?>
-
-                <li class="page-item">
-                    <a class="page-link" <?php if ($pager < $totalPages) {
-                                                echo "href='?id=$id?page=$next'";
-                                            } ?>>Next</a>
-                </li>
-            </ul>
-        </nav>
-
     </div>
 
     </div>
