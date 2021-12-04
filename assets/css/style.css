@@ -1,0 +1,124 @@
+.rounded-slide {
+  border-radius: 20px;
+}
+
+/* Search */
+
+.rounded-slide-search {
+  border-radius: 40px;
+}
+
+.search-opacity {
+  opacity: 0.9;
+}
+
+.search-no-focus:focus {
+  outline-width: 0px;
+}
+
+/* Category */
+
+.hover-category:hover {
+  background-color: #eaddff;
+  border-radius: 40px;
+}
+
+.font-category {
+  font-family: "Montserrat", sans-serif;
+}
+
+/* The heart of the matter */
+@media only screen and (max-width: 900px) {
+  .horizontal-scrollable > .row {
+    overflow-x: auto;
+  }
+}
+
+.horizontal-scrollable > .row > .col-xs-4 {
+  display: block;
+}
+/* Decorations */
+
+/* Button */
+
+.btn-primary-color {
+  background-color: #4f378b;
+}
+
+#myBtn {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 140px; /* Place the button at the bottom of the page */
+  right: 50px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: #21005d; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  border-radius: 50%; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+}
+
+@media only screen {
+}
+
+#myBtnMobile {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 10%; /* Place the button at the bottom of the page */
+  right: 1000px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: #21005d; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  border-radius: 50%; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+}
+
+#myBtn:hover {
+  background-color: #4f378b; /* Add a dark-grey background on hover */
+}
+
+.search-mobile {
+  width: 100%;
+  border-radius: 40px;
+  outline-color: #21005d;
+  visibility: hidden;
+  display: inline;
+}
+
+@media screen and (max-width: 200px) {
+  .main-search {
+    width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+    display: block;
+    visibility: visible;
+  }
+}
+
+/* section {
+  padding: 0;
+  position: relative;
+  margin-bottom: 80px;
+  overflow: hidden;
+}
+div.img-wrapper {
+  background-image: url("../img/register.png");
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  /*   change the left side image width as like you want */
+/* width: 41.66667%;
+  height: 0;
+  left: 0; */
+/* } */
+
+section {
+  padding: 30px 0;
+  background: linear-gradient(to right, transparent 50%, #fff 50%), url("../img/register.png?") no-repeat top left;
+  background-size: cover;
+  height: 100%;
+}
