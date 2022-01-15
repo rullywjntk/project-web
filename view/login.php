@@ -2,11 +2,13 @@
 session_start();
 
 if (isset($_SESSION['login']) && $_SESSION['login'] === true) {
-  header("Location: index.php");
+  header("Location: ../index.php");
   exit;
 }
 
-require_once("koneksi.php");
+require_once("../koneksi.php");
+
+
 $email = $password = "";
 $emailError = $passwordError = $loginError = "";
 
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
 
   if (empty($emailError) && empty($passwordError)) {
-    $sql = "SELECT id, email, password FROM user WHERE email = ?";
+    $sql = "SELECT id, name, email, password FROM user WHERE email = ?";
 
     if ($stmt = mysqli_prepare($connect, $sql)) {
       mysqli_stmt_bind_param($stmt, "s", $param_email);
@@ -34,16 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         mysqli_stmt_store_result($stmt);
 
         if (mysqli_stmt_num_rows($stmt) == 1) {
-          mysqli_stmt_bind_result($stmt, $id, $email, $hashPassword);
+          mysqli_stmt_bind_result($stmt, $id, $name, $email, $hashPassword);
           if (mysqli_stmt_fetch($stmt)) {
             if (password_verify($password, $hashPassword)) {
               session_start();
 
               $_SESSION['login'] = true;
               $_SESSION['id'] = $id;
+              $_SESSION['name'] = $name;
               $_SESSION['email'] = $email;
 
-              header("Location: index.php");
+
+              header("Location: ../index.php");
             } else {
               $loginError = "Email atau password salah";
             }
@@ -70,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   <meta name="description" content="">
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Hugo 0.84.0">
-  <title>Sign In</title>
+  <title>Login</title>
 
   <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
 
@@ -78,15 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
   <!-- Bootstrap core CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
-  <!-- Favicons -->
-  <link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-  <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-  <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-  <link rel="manifest" href="/docs/5.0/assets/img/favicons/manifest.json">
-  <link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
-  <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
-  <meta name="theme-color" content="#7952b3">
 
 
   <style>
@@ -107,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 
   <!-- Custom styles for this template -->
-  <link href="assets/css/signin.css" rel="stylesheet">
+  <link href="../assets/css/signin.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
@@ -120,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     ?>
 
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="login">
-      <img class="mb-4 mw-25 mh-25 w-25 h-25" src="assets/img/logo.svg" alt="">
+      <img class="mb-4 mw-25 mh-25 w-25 h-25" src="../assets/img/logo.svg" alt="">
       <h1 class="h3 mb-3 fw-normal">Sign In</h1>
 
 

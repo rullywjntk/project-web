@@ -1,25 +1,78 @@
 <?php
-require_once("koneksi.php");
+require_once("../koneksi.php");
+session_start();
 
-if (isset($_POST['register'])) {
+$nameError = $emailError = $passwordError = $phoneError = '';
+$name = $email = $password = $phoneNumber = '';
 
-  $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-  $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-  $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-  $phoneNumber = filter_input(INPUT_POST, 'phoneNumber', FILTER_VALIDATE_INT);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty(trim($_POST["name"]))) {
+    $nameError = "Please enter your name";
+  } elseif (!preg_match('/^[a-zA-Z]+$/', trim($_POST['name']))) {
+    $nameError = "Name can only contain letters";
+  } else {
+    $name = trim($_POST['name']);
+  }
 
-  $sql = "INSERT INTO user (name, email, password, phone_number) VALUES (:name, :email, :password, :phoneNumber)";
-  $stmt = $db->prepare($sql);
+  if (empty(trim($_POST['email']))) {
+    $emailError = "Please enter your email";
+  } else {
+    $sql = "SELECT id FROM user WHERE email = ?";
+    if ($stmt = mysqli_prepare($connect, $sql)) {
+      mysqli_stmt_bind_param($stmt, "s", $params_email);
 
-  $params = array(
-    ":name" => $name,
-    ":email" => $email,
-    ":password" => $password,
-    ":phoneNumber" => $phoneNumber
-  );
+      $params_email = trim($_POST['email']);
 
-  $saved = $stmt->execute($params);
-  if ($saved) header("Location: login.php");
+      if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_store_result($stmt);
+        if (mysqli_stmt_num_rows($stmt) == 1) {
+          $emailError = "This email is already registered";
+        } else {
+          $email = trim($_POST['email']);
+        }
+      } else {
+        echo "Something wrong please try again later";
+      }
+
+      mysqli_stmt_close($stmt);
+    }
+  }
+
+  if (empty(trim($_POST['password']))) {
+    $passwordError = "Please enter a password";
+  } elseif (strlen(trim($_POST['password'])) < 6) {
+    $passwordError = "Password must at least 6 characters";
+  } else {
+    $password = trim($_POST['password']);
+  }
+
+  if (empty(trim($_POST['phoneNumber']))) {
+    $phoneError = "Please enter your phone number";
+  } else {
+    $phoneNumber = trim($_POST['phoneNumber']);
+  }
+
+  if (empty($nameError) && empty($emailError) && empty($passwordError) && empty($phoneError)) {
+    $sql = "INSERT INTO user (name, email, password, phone_number) VALUES (?,?,?,?)";
+    if ($stmt = mysqli_prepare($connect, $sql)) {
+      mysqli_stmt_bind_param($stmt, "ssss", $params_name, $params_email, $params_password, $params_phone);
+
+      $params_name = $name;
+      $params_email = $email;
+      $params_password = password_hash($password, PASSWORD_DEFAULT);
+      $params_phone = $phoneNumber;
+
+      if (mysqli_stmt_execute($stmt)) {
+        header("location: login.php");
+      } else {
+        echo "Something went wrong. Please try again later";
+      }
+
+      mysqli_stmt_close($stmt);
+    }
+  }
+
+  mysqli_close($connect);
 }
 
 ?>
@@ -34,8 +87,8 @@ if (isset($_POST['register'])) {
   <title>Register</title>
 </head>
 
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="assets/css/all.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/all.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,34 +115,35 @@ if (isset($_POST['register'])) {
       <div class="row ms-5">
         <div class="offset-sm-6 col-sm-6">
           <nav class="navbar navbar-light">
-            <img class="mw-25 mh-25 mt-3" src="assets/img/logo.svg" style="height: 50px; width: 50px;" alt="" srcset="">
+            <img class="mw-25 mh-25 mt-3" src="../assets/img/logo.svg" style="height: 50px; width: 50px;" alt="" srcset="">
             <a class="navbar-brand me-auto fw-bold mt-3" href="index.php" style="font-family: 'Montserrat', sans-serif;">Dolen Suroboyo</a>
           </nav>
 
           <div class="mt-5">
 
             <p class="fs-3 fw-bold mt-5" style="font-family: 'Montserrat', sans-serif;">Sign Up</p>
-            <form action="" method="POST" class="text-center mt-5">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" class="text-center mt-5" name="register">
               <div class="row mt-5">
                 <div class="col">
-                  <input type="text" class="form-control" placeholder="First name*" aria-label="First name">
-                </div>
-                <div class="col">
-                  <input type="text" class="form-control" placeholder="Last name*" aria-label="Last name">
+                  <input type="text" name="name" class="form-control <?php echo (!empty($nameError)) ? 'is-invalid' : ''; ?>" placeholder="Nama Lengkap *" aria-label="First name" value="<?php echo $name; ?>">
+                  <span class="invalid-feedback"><?php echo $nameError; ?></span>
                 </div>
               </div>
               <div class="col mt-3">
-                <input type="text" class="form-control" placeholder="Email Address*" aria-label="Email Address">
+                <input type="email" name="email" class="form-control <?php echo (!empty($emailError)) ? 'is-invalid' : ''; ?>" placeholder="Email *" aria-label="Email Address" value="<?php echo $email; ?>">
+                <span class="invalid-feedback"><?php echo $emailError; ?></span>
               </div>
               <div class="col mt-3">
-                <input type="text" class="form-control" placeholder="Password*" aria-label="Password">
+                <input type="password" name="password" class="form-control <?php echo (!empty($passwordError)) ? 'is-invalid' : ''; ?>" placeholder="Password*" aria-label="Password" value="<?php echo $password; ?>">
+                <span class="invalid-feedback"><?php echo $passwordError; ?></span>
               </div>
               <div class="col mt-3">
-                <input type="text" class="form-control" placeholder="Confirm Password*" aria-label="Confirm Password">
+                <input type="number" name="phoneNumber" class="form-control <?php echo (!empty($phoneError)) ? 'is-invalid' : ''; ?>" placeholder="No. Handphone *" aria-label="phoneNumber" value="<?php echo $phoneNumber; ?>">
+                <span class="invalid-feedback"><?php echo $phoneError; ?></span>
               </div>
 
               <div class="col mt-5">
-                <button class="btn btn-primary w-100" type="submit" value="register">Register</button>
+                <button class="btn btn-primary w-100" name="register" type="submit" value="register">Register</button>
               </div>
 
             </form>

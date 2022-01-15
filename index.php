@@ -1,3 +1,8 @@
+<?php
+session_start();
+include "koneksi.php"
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +10,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Dolen Suroboyo</title>
 </head>
 
 <link rel="stylesheet" href="assets/css/style.css">
@@ -36,14 +41,25 @@
               <a class="nav-link text-black mt-3 me-3" href="#">About Us</a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link text-black mt-3 me-3" href="login.php">Login</a>
+              <?php
+              if (!isset($_SESSION['login'])) { ?>
+                <a class="nav-link text-black mt-3 me-3" href="view/login.php">Login</a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link text-black mt-3 me-3" href="logout.php">Logout</a>
+              <a class="btn mt-3 text-light" style="background-color: #7F67BE;" href="view/register.php">Sign Up</a>
             </li>
-            <li class="nav-item mt-2">
-              <a class="btn mt-3 text-light" style="background-color: #7F67BE;" href="register.php">Sign Up</a>
-            </li>
+          <?php  } else { ?>
+            <div class="dropdown mt-3">
+              <button class="btn btn-outline text-black dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <?php echo $_SESSION['name'] ?>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+                <li><a class="dropdown-item" href="#">Saved Location</a></li>
+                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+              </ul>
+            </div>
+          <?php } ?>
           </ul>
         </div>
       </div>
@@ -84,8 +100,8 @@
 
   <div class="container d-none d-lg-block">
     <div class="rounded-slide-search d-flex translate-middle position-relative w-50 start-50 top-100 p-2 pe-4 shadow-sm bg-body">
-      <form class="d-flex position-relative w-100 m-2">
-        <input class="ps-3 pe-3 rounded-slide-search w-100 d-inline-flex search-no-focus" style="border: none;" type="search" placeholder="Search Places" aria-label="Search">
+      <form class="d-flex position-relative w-100 m-2" method="GET" action="view/search.php">
+        <input class=" ps-3 pe-3 rounded-slide-search w-100 d-inline-flex search-no-focus" style="border: none;" type="text" name="search" placeholder="Search Places" aria-label="Search" required>
         <button class="btn p-3 d-sm-inline-flex start-50" type="submit" style="background-color: #7F67BE;">
           <i class="fas fa-search-location text-light fa-lg"></i>
         </button>
@@ -96,8 +112,8 @@
   <!-- Mobile Search -->
 
   <div class="container d-lg-none mt-4">
-    <form class="d-flex position-relative w-100 m-2">
-      <input class="ps-3 pe-3 p-3 rounded-slide-search w-100 d-inline-flex search-no-focus" style="border: none; background-color: #F4EFF4;" type="search" placeholder="Search Places" aria-label="Search">
+    <form class="d-flex position-relative w-100 m-2" method="GET" action="view/search.php">
+      <input class="ps-3 pe-3 p-3 rounded-slide-search w-100 d-inline-flex search-no-focus" style="border: none; background-color: #F4EFF4;" type="text" name="search" placeholder="Search Places" aria-label="Search">
       <button class="btn ms-2 me-2 d-sm-inline-flex p-3" type="submit" style="background-color: #7F67BE;">
         <i class="fas fa-search-location text-light fa-lg"></i>
       </button>
@@ -118,18 +134,18 @@
 
         <?php
 
-        include 'koneksi.php';
         $no = 0;
+        $i = 1;
         $query = mysqli_query($connect, "SELECT * FROM place_category ORDER BY id DESC");
         while ($result = mysqli_fetch_array($query)) {
           $no++;
         ?>
 
           <div class="col">
-            <a href="category.php?id=<?= $result['id'] ?>" class="text-decoration-none">
-              <div class="card" style="background-color: #F4EFF4; border: none;">
-                <img src="assets/img/food-junction.jpg" alt="">
-                <p class="card-text fs-4 fw-bold text-center text-black mt-5 font-category"><?= $result['name_category'] ?></p>
+            <a href="view/category.php?id=<?= $result['id'] ?>&page=<?= $i ?>" class="text-decoration-none">
+              <div class="card hover-category" style="background-color: #F4EFF4; border: none; border-radius:50%;">
+                <img src="<?= $result['img_category'] ?>" alt="" style="border-top-left-radius: 50%; border-top-right-radius:50%;padding:10px">
+                <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category"><?= $result['name_category'] ?></p>
                 </i>
               </div>
             </a>
@@ -150,44 +166,33 @@
 
       <div class="container horizontal-scrollable">
         <div class="row flex-nowrap flex-sm-wrap justify-content-start">
-          <div class="col-xs-4">
-            <div class="card min-vw-25" style="background-color: #F4EFF4; border: none;">
-              <i class="fas fa-tree fa-5x text-center hover-category" style="color: green;">
-                <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category">Park</p>
-              </i>
-            </div>
-          </div>
+          <?php
 
-          <div class="col-xs-4">
-            <div class="card" style="background-color: #F4EFF4; border: none;">
-              <i class="fas fa-landmark fa-5x text-center hover-category" style="color:cadetblue;">
-                <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category">Landmark</p>
-              </i>
-            </div>
-          </div>
+          $no = 0;
+          $i = 1;
+          $query = mysqli_query($connect, "SELECT * FROM place_category ORDER BY id DESC");
+          while ($result = mysqli_fetch_array($query)) {
+            $no++;
+          ?>
 
-          <div class="col-xs-4">
-            <div class="card" style="background-color: #F4EFF4; border: none;">
-              <i class="fas fa-shopping-cart fa-5x text-center hover-category" style="color: green;">
-                <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category">Shopping</p>
-              </i>
+            <div class="col-xs-4">
+              <a href="view/category.php?id=<?= $result['id'] ?>&page=<?= $i ?>" class="text-decoration-none">
+                <div class="card hover-category" style="background-color: #F4EFF4; border: none; border-radius:50%;">
+                  <img src="<?= $result['img_category'] ?>" alt="" style="border-top-left-radius: 50%; border-top-right-radius:50%;padding:10px">
+                  <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category"><?= $result['name_category'] ?></p>
+                  </i>
+                </div>
+              </a>
             </div>
-          </div>
 
-          <div class="col-xs-4">
-            <div class="card" style="background-color: #F4EFF4; border: none;">
-              <i class="fas fa-utensils fa-5x text-center hover-category" style="color:deepskyblue;">
-                <p class="card-text fs-4 fw-bold text-center text-black mt-3 font-category">Culinary</p>
-              </i>
-            </div>
-          </div>
+          <?php } ?>
+
         </div>
       </div>
     </div>
   </div>
 
   <!-- End Mobile Category -->
-
 
   <!-- End Menu Category -->
 
@@ -198,116 +203,28 @@
     <p class="text-center mb-5 ">Not sure where's to go, Here popular destinations for you!</p>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
 
-      <div class="col">
-        <div class="card shadow-sm">
-          <img src="assets/img/tugu-pahlawan.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Tugu Pahlawan</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn text-light" style="background-color: #7F67BE;">Details</a>
+      <?php
+      $maxContent = 8;
+      $sql = mysqli_query($connect, "SELECT * FROM place WHERE id_category ORDER BY RAND() limit $maxContent");
+      while ($result = mysqli_fetch_array($sql)) {
+
+      ?>
+
+        <div class="col">
+          <div class="p-2 shadow rounded-slide position-relative" style="height: 30rem;">
+            <img src="<?= $result['place_image'] ?>" class="card-img-top p-2 rounded-slide " alt="..." style="border-top-right-radius:20px; border-top-left-radius:20px">
+            <div class="card-body">
+              <a href="view/detail-data.php?id=<?= $result['id_place'] ?>" class="text-decoration-none text-black mb-3 fs-5 card-title text-truncate pb-2"><?= $result['name_place'] ?></a>
+              <p class="text-secondary text-truncate" style="font-size: 12px;"><?= $result['location_place'] ?></p>
+              <p class="body-text"><?= $result['desc_place'] ?></p>
+              <a href="<?= $result['map'] ?>" class="hover-item text-decoration-none text-secondary text-end fa-md bottom-0 position-absolute mb-4"><i class="fas fa-map-marker text-primary me-2"></i>Show Map</a>
+              <i class="far fa-heart  position-absolute fa-2x mb-4 me-3 text-secondary bottom-0 end-0"></i>
+
+            </div>
           </div>
         </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/tp.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Tunjungan Plaza</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/hotel-majapahit.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Hotel Majapahit</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/kbs.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title ">Kebun Binatang Surabaya</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
+      <?php } ?>
     </div>
-
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-1">
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/museum-10-nov.JPG" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Museum 10 November</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/taman-bungkul.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Taman Bungkul</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/food-junction.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">Food Junction</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col">
-
-        <div class="card shadow-sm">
-          <img src="assets/img/house-of-sampoerna.jpg" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">House of Sampoerna</h5>
-            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-            <a href="#" class="btn btn-primary" style="background-color: #7F67BE;">Details</a>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
   </div>
 
   <!-- End Content -->
