@@ -83,7 +83,7 @@ include '../koneksi.php';
         <?php
 
         $dataPlaces = mysqli_query($connect, "SELECT * FROM place WHERE id_place=$id");
-        while ($result = mysqli_fetch_assoc($dataPlaces)) {
+        while ($result = mysqli_fetch_array($dataPlaces)) {
 
         ?>
             <p class="fs-1 fw-bold pt-3" style="font-family: 'Montserrat', sans-serif;"><?= $result['name_place'] ?></p>
@@ -123,16 +123,15 @@ include '../koneksi.php';
                     <p class="card-text mt-3 mb-3 fs-3 fw-bold" style="font-family: 'Montserrat', sans-serif;">Review</p>
 
                     <?php
-                    $dataReview = mysqli_query($connect, "SELECT * FROM review INNER JOIN place WHERE id_place=$id");
+                    $dataReview = mysqli_query($connect, "SELECT * FROM review WHERE id_place=$id");
                     while ($review = mysqli_fetch_array($dataReview)) {
                     ?>
                         <div>
                             <p><?= $review['review'] ?></p>
                             <p><?= $review['user_review'] ?></p>
                         </div>
-                        <hr>
                     <?php } ?>
-
+                    <hr>
                     <div class="mb-3">
                         <form action="../data_review.php" method="POST">
                             <input type="hidden" name="id" value="<?= $result['id_place'] ?>">

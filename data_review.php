@@ -14,7 +14,10 @@ if ($reviews) {
     header("location: view/detail-data.php?id=$id");
     exit;
 } else {
-    echo "gagal input data";
+
+    echo '<script type="text/JavaScript">';
+    echo 'alert("Anda sudah melakukan review")';
+    echo '</script>';
     header("location: view/detail-data.php?id=$id");
     exit;
 }
