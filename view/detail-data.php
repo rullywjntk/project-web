@@ -127,8 +127,8 @@ include '../koneksi.php';
                     while ($review = mysqli_fetch_array($dataReview)) {
                     ?>
                         <div>
-                            <p><?= $review['review'] ?></p>
-                            <p><?= $review['user_review'] ?></p>
+                            <p class="fw-bold fs-5"><?= $review['user_review'] ?></p>
+                            <p class="fs-5"><?= $review['review'] ?>.</p>
                         </div>
                     <?php } ?>
                     <hr>
