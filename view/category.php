@@ -47,7 +47,7 @@ $query = mysqli_query($connect, "SELECT * FROM place WHERE id_category='$id'");
                         </li>
                         <?php
                         if (!isset($_SESSION['login'])) { ?>
-                            <a class="nav-link text-black mt-3 me-3" href="view/login.php">Login</a>
+                            <a class="nav-link text-black mt-4 me-3" href="view/login.php">Login</a>
                             </li>
                             <li class="nav-item mt-2">
                                 <a class="btn mt-3 text-light" style="background-color: #7F67BE;" href="view/register.php">Sign Up</a>
